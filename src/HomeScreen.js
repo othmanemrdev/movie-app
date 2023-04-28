@@ -1,14 +1,18 @@
 import React from 'react';
-import { StyleSheet, View, Text, TextInput } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
+import { SearchBar } from '@rneui/themed';
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
-      <TextInput
-    placeholder="Rechercher..."
-    style={styles.searchBar}
-  />
-      <Text style={styles.text}>page d'accueil</Text>
+      <SearchBar
+        placeholder="Rechercher"
+        containerStyle={styles.searchBarContainer}
+        inputContainerStyle={styles.searchBarInputContainer}
+      />
+      <View style={styles.contentContainer}>
+        <Text style={styles.text}>Welcome to InfoFlix</Text>
+      </View>
     </View>
   );
 }
@@ -16,22 +20,25 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  searchBarContainer: {
+    backgroundColor: 'transparent',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    paddingHorizontal: 10,
+    marginTop: 30,
+  },
+  searchBarInputContainer: {
+    backgroundColor: '#EDEDED',
+  },
+  contentContainer: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
-  },
-  searchBar: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 10,
-    paddingRight: 10,
-    width: '90%',
+    color: 'red',
   },
 });
-
