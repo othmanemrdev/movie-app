@@ -25,13 +25,25 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home">
-          {(props) => <HomeScreen {...props} />}
-        </Stack.Screen>
-        <Stack.Screen name="MovieDetailsScreen" component={MovieDetailsScreen} />
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ headerShown: false }}
+        />
+       <Stack.Screen
+  name="MovieDetailsScreen"
+  component={MovieDetailsScreen}
+  options={{
+    headerTransparent: true,
+    headerTitle: '',
+    headerTintColor: '#fff'
+  }}
+/>
+
       </Stack.Navigator>
     </NavigationContainer>
   );
+  
 }
 
 const styles = StyleSheet.create({
