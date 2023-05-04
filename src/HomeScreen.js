@@ -10,25 +10,21 @@ const image = require('../assets/image.jpg');
 export default function HomeScreen() {
   const [movies, setMovies] = useState([]);
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const navigation = useNavigation();   
 
   useEffect(() => {
     const fetchData = async () => {
       const apiKey = '8d13dd9bdf3d2f1406950d178300ecbc';
       const language = 'us-US';
-      const totalPages = 3; 
-      let allMovies = [];
-  
-      for (let page = 1; page <= totalPages; page++) {
-        const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?page=${page}&api_key=${apiKey}&language=${language}`);
-        allMovies = allMovies.concat(response.data.results);
-      }
-  
-      setMovies(allMovies);
-    }
+      const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?page=${currentPage}&api_key=${apiKey}&language=${language}`);
+      setTotalPages(response.data.total_pages);
+      setMovies(movies => movies.concat(response.data.results));
+    };
   
     fetchData();
-  }, []);
+  }, [currentPage]);
   
   const onSearch = (text) => {
     setSearch(text);
@@ -39,19 +35,23 @@ export default function HomeScreen() {
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => navigation.navigate('MovieDetailsScreen', { film: item })}>  
       <View style={styles.movieContainer}>
-      <Text style={styles.movieYear}>{new Date(item.release_date).getFullYear()}</Text>
+        <Text style={styles.movieYear}>{new Date(item.release_date).getFullYear()}</Text>
         <Image
           source={{ uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}` }}
           style={styles.movieImage}
         />
         <View style={styles.movieDetails}>
           <Text style={styles.movieTitle}>{item.title}</Text>
-       
         </View>
       </View>
     </TouchableOpacity>
   );
-  
+
+  const handleLoadMore = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -73,6 +73,8 @@ export default function HomeScreen() {
               data={filteredMovies}
               renderItem={renderItem}
               keyExtractor={item => item.id.toString()}
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.5}
             />
           </View>
         </View>
