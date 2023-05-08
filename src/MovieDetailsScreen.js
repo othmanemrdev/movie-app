@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, FlatList } from 'react-native';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+
 
 export default function MovieDetailsScreen({ route, navigation }) {
   const [movie, setMovie] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [topRatedMovies, setTopRatedMovies] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+
 
   useEffect(() => {
     axios.get(`https://api.themoviedb.org/3/movie/${route.params.film.id}`, {
@@ -13,10 +20,71 @@ export default function MovieDetailsScreen({ route, navigation }) {
         language: 'us-US',
       },
     })
-      .then(response => setMovie(response.data))
+      .then(response => {
+        setMovie(response.data);
+        const fetchFavorite = async () => {
+          try {
+            const storedFavorites = await AsyncStorage.getItem('favorites');
+            let favorites = [];
+            if (storedFavorites !== null) {
+              favorites = JSON.parse(storedFavorites);
+            }
+            const index = favorites.findIndex((f) => f.id === response.data.id);
+            setIsFavorite(index !== -1);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        fetchFavorite();
+      })
       .catch(error => console.error(error));
-  }, []);
+      fetchTopRatedMovies(currentPage);
+  }, [currentPage]);
+  
 
+  const toggleFavorite = async () => {
+    try {
+      const storedFavorites = await AsyncStorage.getItem('favorites');
+      let favorites = [];
+      if (storedFavorites !== null) {
+        favorites = JSON.parse(storedFavorites);
+      }
+      const index = favorites.findIndex((f) => f.id === movie.id);
+      if (index === -1) {
+        favorites.push(movie);
+        setIsFavorite(true); 
+      } else {
+        favorites.splice(index, 1);
+        setIsFavorite(false);
+      }
+      await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchTopRatedMovies = async () => {
+    let movies = null;
+    while (movies === null) {
+      const randomNumber = Math.floor(Math.random() * 1000) + 1;
+      try {
+        const response = await axios.get(`https://api.themoviedb.org/3/movie/top_rated`, {
+          params: {
+            api_key: '8d13dd9bdf3d2f1406950d178300ecbc',
+            language: 'us-US',
+            page: randomNumber,
+          },
+        });
+        movies = response.data.results;
+      } catch (error) {
+        
+      }
+    }
+    setTopRatedMovies(movies);
+  };
+  
+  
+  
+  
 
   function convertToHoursAndMinutes(minutes) {
     const hours = Math.floor(minutes / 60);
@@ -34,6 +102,9 @@ export default function MovieDetailsScreen({ route, navigation }) {
       <Image source={{ uri: `https://image.tmdb.org/t/p/w500/${movie.poster_path}` }} style={styles.movieImage} />
       <View style={styles.detailsContainer}>
         <Text style={styles.title}>{movie.title}</Text>
+        <TouchableOpacity onPress={toggleFavorite}>
+  <Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={24} color='red' style={styles.favoriteIcon} />
+</TouchableOpacity>
         <View style={styles.ratingContainer}>
           <Ionicons name='star' size={24} color='gold' style={styles.starIcon} /> 
           <Text style={styles.rating}>{movie.vote_average} / 10</Text>
@@ -86,9 +157,33 @@ export default function MovieDetailsScreen({ route, navigation }) {
             <Text style={styles.label}>Status:</Text>
             <Text style={styles.a}>{movie.status}</Text>
           </View>
-        </View>
+       </View>
       </View>
+
+      <Text style={styles.label}>Suggested for you :</Text>
+      <FlatList
+  style={{ marginTop: 40 }}
+  data={topRatedMovies}
+  horizontal
+  showsHorizontalScrollIndicator={false}
+  renderItem={({ item }) => (
+    <TouchableOpacity onPress={() => navigation.push('MovieDetailsScreen', { film: item })}>
+      <View style={styles.movieContainer1}>
+        <Text style={styles.movieYear1}>{new Date(item.release_date).getFullYear()}</Text>
+        <Text style={styles.movieTitle1}>{item.title}</Text>
+        <Image
+          source={{ uri: `https://image.tmdb.org/t/p/w500/${item.poster_path}` }}
+          style={styles.movieImage1}
+        />
+      </View>
+    </TouchableOpacity>
+  )}
+  keyExtractor={(item) => item.id.toString()}
+/>
+
+<View style={{ height: 40 }} />
     </ScrollView>
+     
   );
   
 }
@@ -261,5 +356,36 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
+  movieContainer1: {
+    width: 300,
+    height: 400,
+  },
+  movieYear1: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
+    marginBottom: 5,
+  },
+  movieImage1: {
+    width: 200,
+    height: 300,
+    borderRadius: 10,
+    borderColor: 'white', 
+    borderWidth: 5, 
+  },
+  movieDetails1: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  movieTitle1: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 5,
+  },
+  
+ 
     
 });

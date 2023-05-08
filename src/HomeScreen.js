@@ -13,6 +13,8 @@ export default function HomeScreen() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const navigation = useNavigation();   
+  const [isLoading, setIsLoading] = useState(false);
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,23 +68,27 @@ export default function HomeScreen() {
               inputStyle={{ backgroundColor: '#EDEDED' }}
               containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }}
             />
+            <TouchableOpacity onPress={() => navigation.navigate('FavoritesScreen')}>
+              <Text style={styles.favoritesButton}>Favoris</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.text}>Welcome to InfoFlix</Text>
             <FlatList
-              data={filteredMovies}
-              renderItem={renderItem}
-              keyExtractor={item => item.id.toString()}
-              onEndReached={handleLoadMore}
-              onEndReachedThreshold={0.5}
-            />
+  data={filteredMovies}
+  renderItem={renderItem}
+  keyExtractor={item => item.id.toString()}
+  onEndReached={handleLoadMore}
+  onEndReachedThreshold={0.5}
+  ListFooterComponent={isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}
+/>
+
           </View>
         </View>
       </ImageBackground>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -130,5 +136,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-    
+  favoritesButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    marginLeft: 10,
+  },
+  favoritesButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
