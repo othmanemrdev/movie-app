@@ -9,7 +9,7 @@ export default function SplashScreen() {
         source={require('../assets/logo.png')}
         style={styles.logo}
       />
-      <ProgressBar indeterminate width={200} color="#fff" />
+      <ProgressBar indeterminate width={200} color="#2f2f2f" />
     </View>
   );
 }
@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#2d3436',
+    backgroundColor: '#f2f2f2',
   },
   logo: {
     width: 350,
