@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ImageBackground, TouchableOpacity, FlatList, Image, StatusBar } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import { apiKey } from '../config';
 
 const image = require('../assets/image.jpg');
 
@@ -18,12 +18,12 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const apiKey = '8d13dd9bdf3d2f1406950d178300ecbc';
       const language = 'us-US';
       const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?page=${currentPage}&api_key=${apiKey}&language=${language}`);
       setTotalPages(response.data.total_pages);
       setMovies(movies => movies.concat(response.data.results));
     };
+    
   
     fetchData();
   }, [currentPage]);
@@ -68,16 +68,13 @@ export default function HomeScreen() {
               inputStyle={{ backgroundColor: '#EDEDED' }}
               containerStyle={{ backgroundColor: 'transparent', borderTopWidth: 0, borderBottomWidth: 0 }}
             />
-            <TouchableOpacity onPress={() => navigation.navigate('FavoritesScreen')}>
-              <Text style={styles.favoritesButton}>Favoris</Text>
-            </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
             <Text style={styles.text}>Welcome to InfoFlix</Text>
             <FlatList
   data={filteredMovies}
   renderItem={renderItem}
-  keyExtractor={item => item.id.toString()}
+  keyExtractor={item => item.id.toString() + Math.floor(Math.random() * 1000) + 1}
   onEndReached={handleLoadMore}
   onEndReachedThreshold={0.5}
   ListFooterComponent={isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : null}

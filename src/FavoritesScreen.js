@@ -17,15 +17,21 @@ const FavoritesScreen = ({ navigation }) => {
         console.log(error);
       }
     };
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchFavorites();
+    });
+
     fetchFavorites();
-  }, []);
+
+    return unsubscribe;
+  }, [navigation]);
 
   const removeFavorite = async (id) => {
     try {
       const storedFavorites = await AsyncStorage.getItem('favorites');
       if (storedFavorites !== null) {
         const favorites = JSON.parse(storedFavorites);
-        const newFavorites = favorites.filter((f) => f.id !== id);
+        const newFavorites = favorites.filter((item) => item && item.id !== id);
         await AsyncStorage.setItem('favorites', JSON.stringify(newFavorites));
         setFavorites(newFavorites);
       }

@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, Image, ScrollView, TouchableOpacity, FlatList }
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { apiKey } from '../config';
+
 
 
 export default function MovieDetailsScreen({ route, navigation }) {
@@ -14,32 +16,40 @@ export default function MovieDetailsScreen({ route, navigation }) {
 
 
   useEffect(() => {
-    axios.get(`https://api.themoviedb.org/3/movie/${route.params.film.id}`, {
-      params: {
-        api_key: '8d13dd9bdf3d2f1406950d178300ecbc',
-        language: 'us-US',
-      },
-    })
+    axios
+      .get(`https://api.themoviedb.org/3/movie/${route.params.film.id}`, {
+        params: {
+          api_key: apiKey,
+          language: 'us-US',
+        },
+      })
       .then(response => {
         setMovie(response.data);
-        const fetchFavorite = async () => {
-          try {
-            const storedFavorites = await AsyncStorage.getItem('favorites');
-            let favorites = [];
-            if (storedFavorites !== null) {
-              favorites = JSON.parse(storedFavorites);
-            }
-            const index = favorites.findIndex((f) => f.id === response.data.id);
-            setIsFavorite(index !== -1);
-          } catch (error) {
-            console.log(error);
-          }
-        };
-        fetchFavorite();
+        fetchTopRatedMovies(currentPage);
       })
       .catch(error => console.error(error));
-      fetchTopRatedMovies(currentPage);
-  }, [currentPage]);
+  
+    const checkFavoriteStatus = async () => {
+      try {
+        const storedFavorites = await AsyncStorage.getItem('favorites');
+        if (storedFavorites !== null) {
+          const favorites = JSON.parse(storedFavorites);
+          const index = favorites.findIndex(f => f.id === route.params.film.id);
+          setIsFavorite(index !== -1);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    checkFavoriteStatus();
+  
+    const unsubscribe = navigation.addListener('focus', () => {
+      checkFavoriteStatus();
+    });
+  
+    return unsubscribe;
+  }, [currentPage, navigation, route.params.film.id]);
   
 
   const toggleFavorite = async () => {
@@ -69,18 +79,18 @@ export default function MovieDetailsScreen({ route, navigation }) {
       try {
         const response = await axios.get(`https://api.themoviedb.org/3/movie/top_rated`, {
           params: {
-            api_key: '8d13dd9bdf3d2f1406950d178300ecbc',
+            api_key: apiKey,
             language: 'us-US',
             page: randomNumber,
           },
         });
         movies = response.data.results;
       } catch (error) {
-        
       }
     }
     setTopRatedMovies(movies);
   };
+  
   
   
   
@@ -178,7 +188,7 @@ export default function MovieDetailsScreen({ route, navigation }) {
       </View>
     </TouchableOpacity>
   )}
-  keyExtractor={(item) => item.id.toString()}
+  keyExtractor={(item) => item.id.toString() + Math.floor(Math.random() * 1000) + 1}
 />
 
 <View style={{ height: 40 }} />
