@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-const FavoritesScreen = ({ navigation }) => {
+const FavoritesScreen = () => {
   const [favorites, setFavorites] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -17,6 +19,7 @@ const FavoritesScreen = ({ navigation }) => {
         console.log(error);
       }
     };
+
     const unsubscribe = navigation.addListener('focus', () => {
       fetchFavorites();
     });
@@ -41,13 +44,19 @@ const FavoritesScreen = ({ navigation }) => {
   };
 
   const renderFavorite = ({ item }) => (
-    <View style={styles.favoriteItem}>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => removeFavorite(item.id)}>
-        <Ionicons name="trash" size={24} color="white" />
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={styles.favoriteItem}
+      onPress={() => navigation.navigate('MovieDetailsScreen', { film: item })}
+    >
+      <View style={styles.deleteButtonContainer}>
+        <TouchableOpacity style={styles.deleteButton} onPress={() => removeFavorite(item.id)}>
+          <Ionicons name="trash" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
       <Text>{item.title}</Text>
-    </View>
+    </TouchableOpacity>
   );
+  
 
   return (
     <View style={styles.container}>
@@ -93,13 +102,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
+  
+  deleteButtonContainer: {
+    marginLeft: 10,
+    marginRight: 5,
+  },
+  
   deleteButton: {
     backgroundColor: 'red',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
-    marginRight: 10,
   },
+  
+  
 });
 
 export default FavoritesScreen;
