@@ -5,6 +5,8 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import firebaseConfig from '../firebaseConfig.js';
 import { getAuth} from 'firebase/auth';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+
 
 
 
@@ -54,6 +56,8 @@ const RegisterScreen = ({ navigation }) => {
     .catch((error) => {
       setError(error.message);
     });
+    navigation.navigate('Login');
+
 };
   const handleLoginLink = () => {
     navigation.navigate('Login');
@@ -148,11 +152,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   passwordContainer: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
   passwordInput: {
+    width: '100%',
     flex: 1,
     height: 40,
     borderColor: 'gray',
