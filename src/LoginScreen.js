@@ -6,7 +6,6 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Ajoutez ici votre logique de connexion
     console.log('Email:', email);
     console.log('Password:', password);
   };

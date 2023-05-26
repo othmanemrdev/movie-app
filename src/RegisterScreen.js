@@ -31,8 +31,6 @@ const RegisterScreen = ({ navigation }) => {
       setError('Password does not match');
       return;
     }
-
-    // Enregistrement de l'utilisateur dans Firebase
     createUserWithEmailAndPassword(auth, email, password)
     .then(() => {
       const firestore = getFirestore();
@@ -43,8 +41,6 @@ const RegisterScreen = ({ navigation }) => {
         email: email,
         phoneNumber: phoneNumber
       };
-
-      // Enregistrement des informations supplémentaires dans Firebase Firestore
       setDoc(userRef, userData)
         .then(() => {
           console.log('User registered successfully:', username);
