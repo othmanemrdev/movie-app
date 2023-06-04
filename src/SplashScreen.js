@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, Text } from 'react-native';
 import ProgressBar from 'react-native-progress/Bar';
 
 export default function SplashScreen() {
@@ -10,6 +10,9 @@ export default function SplashScreen() {
         style={styles.logo}
       />
       <ProgressBar indeterminate width={200} color="#2f2f2f" />
+      <View style={styles.bottomContainer}>
+        <Text style={styles.text}>Made by <Text style={styles.boldText}>Othmane & Abdleaziz</Text></Text>
+      </View>
     </View>
   );
 }
@@ -25,5 +28,15 @@ const styles = StyleSheet.create({
     width: 350,
     height: 350,
     marginBottom: 50,
+  },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 20,
+  },
+  text: {
+    fontSize: 16,
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
 });

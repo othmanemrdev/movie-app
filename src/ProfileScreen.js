@@ -5,6 +5,7 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <Text>Welcome to your profile!</Text>
+      {/* Ajoutez ici le contenu de la page de profil */}
     </View>
   );
 };
