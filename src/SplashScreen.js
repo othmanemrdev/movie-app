@@ -11,7 +11,7 @@ export default function SplashScreen() {
       />
       <ProgressBar indeterminate width={200} color="#2f2f2f" />
       <View style={styles.bottomContainer}>
-        <Text style={styles.text}>Made by <Text style={styles.boldText}>Othmane & Abdleaziz</Text></Text>
+        <Text style={styles.text}>Made by <Text style={styles.boldText}>Othmane & Abdelaziz</Text></Text>
       </View>
     </View>
   );

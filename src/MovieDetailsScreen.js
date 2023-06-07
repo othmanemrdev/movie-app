@@ -91,11 +91,6 @@ export default function MovieDetailsScreen({ route, navigation }) {
     setTopRatedMovies(movies);
   };
   
-  
-  
-  
-  
-
   function convertToHoursAndMinutes(minutes) {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
