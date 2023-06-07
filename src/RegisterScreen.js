@@ -1,18 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, TextInput, Button, Text, TouchableOpacity, Image  } from 'react-native';
+import { StyleSheet, View, TextInput, Button, Text, TouchableOpacity, Image } from 'react-native';
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 import firebaseConfig from '../firebaseConfig.js';
-import { getFirestore, doc, setDoc} from 'firebase/firestore';
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
 
 const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState(''); 
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -26,7 +25,7 @@ const RegisterScreen = ({ navigation }) => {
       setError('Please fill in all fields');
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setError('Password does not match');
       return;
@@ -34,25 +33,24 @@ const RegisterScreen = ({ navigation }) => {
     if (profileImage) {
       const response = await fetch(profileImage);
       const blob = await response.blob();
-  
+
       const storageRef = ref(storage, `profileImages/${username}`);
-  
+
       await uploadBytes(storageRef, blob);
       const downloadURL = await getDownloadURL(storageRef);
-  
-    
+
       const userData = {
         username: username,
         email: email,
         phoneNumber: phoneNumber,
-        profileImageURL: downloadURL  
+        profileImageURL: downloadURL
       };
-  
+
       createUserWithEmailAndPassword(auth, email, password)
         .then(() => {
           const firestore = getFirestore();
           const userRef = doc(firestore, 'users', auth.currentUser.uid);
-  
+
           setDoc(userRef, userData)
             .then(() => {
               console.log('User registered successfully:', username);
@@ -65,11 +63,11 @@ const RegisterScreen = ({ navigation }) => {
         .catch((error) => {
           setError(error.message);
         });
-  
+
       navigation.navigate('Login');
-    };
+    }
   };
-  
+
   const handleLoginLink = () => {
     navigation.navigate('Login');
   };
@@ -84,18 +82,17 @@ const RegisterScreen = ({ navigation }) => {
 
   const handleChooseImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
+
     if (permissionResult.granted === false) {
       return;
     }
-    
+
     const imagePickerResult = await ImagePicker.launchImageLibraryAsync();
-    
-    if (!imagePickerResult.canceled) {
+
+    if (!imagePickerResult.cancelled) {
       setProfileImage(imagePickerResult.uri);
     }
   };
-  
 
   return (
     <View style={styles.container}>
@@ -149,15 +146,14 @@ const RegisterScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={{ marginTop: 20,
-  marginBottom:20, }}>
-      <Button
-  title="Choose Profile Image"
-  onPress={handleChooseImage}
-/> </View>
+      <View style={{ marginTop: 20, marginBottom: 20 }}>
+        <Button
+          title="Choose Profile Image"
+          onPress={handleChooseImage}
+        />
+      </View>
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <Button title="Register" onPress={handleRegister}  style={{ marginTop: 20,
-  marginBottom:20, }}/>
+      <Button title="Register" onPress={handleRegister} style={{ marginTop: 20, marginBottom: 20 }} />
       <View style={styles.loginLinkContainer}>
         <Text style={styles.loginLinkText}>You already have an account?</Text>
         <TouchableOpacity onPress={handleLoginLink}>

@@ -98,7 +98,7 @@ export default function App() {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Favorites') {
               iconName = focused ? 'heart' : 'heart-outline';
-            } else if (route.name === 'Profile') {
+            } else if (route.name === 'ProfileTab') {
               iconName = focused ? 'person' : 'person-outline';
             }
 
@@ -112,7 +112,7 @@ export default function App() {
         <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
         <Tab.Screen name="Favorites" component={FavoritesStack} options={{ headerShown: false }} />
         <Tab.Screen
-          name="Profile"
+          name="ProfileTab"
           component={LoginRegisterStack}
           options={{
             headerShown: false,
