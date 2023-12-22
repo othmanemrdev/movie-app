@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import SplashScreen from './src/SplashScreen';
-import HomeScreen from './src/HomeScreen';
-import MovieDetailsScreen from './src/MovieDetailsScreen';
-import FavoritesScreen from './src/FavoritesScreen';
-import LoginScreen from './src/LoginScreen';
-import RegisterScreen from './src/RegisterScreen';
+import { AppState } from 'react-native';
+import { Audio } from 'expo-av';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import ProfileScreen from './src/ProfileScreen';
-
+import SplashScreen from './src/SplashScreen';
+import HomeScreen from './src/HomeScreen';
+import MovieDetailsScreen from './src/MovieDetailsScreen';
+import FavoritesScreen from './src/FavoritesScreen';
+import SettingScreen from './src/SettingScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,31 +47,6 @@ function FavoritesStack() {
     </Stack.Navigator>
   );
 }
-
-const LoginRegisterStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Register"
-        component={RegisterScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-
-
 export default function App() {
   const [loading, setLoading] = useState(true);
 
@@ -98,8 +71,8 @@ export default function App() {
               iconName = focused ? 'home' : 'home-outline';
             } else if (route.name === 'Favorites') {
               iconName = focused ? 'heart' : 'heart-outline';
-            } else if (route.name === 'ProfileTab') {
-              iconName = focused ? 'person' : 'person-outline';
+            } else if (route.name === 'Setting') {
+              iconName = focused ? 'settings' : 'settings-outline';
             }
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -112,12 +85,11 @@ export default function App() {
         <Tab.Screen name="Home" component={HomeStack} options={{ headerShown: false }} />
         <Tab.Screen name="Favorites" component={FavoritesStack} options={{ headerShown: false }} />
         <Tab.Screen
-          name="ProfileTab"
-          component={LoginRegisterStack}
+          name="Setting"
+          component={SettingScreen}
           options={{
-            headerShown: false,
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="person" size={size} color={color} />
+              <Ionicons name="settings" size={size} color={color} />
             ),
           }}
         />
@@ -125,4 +97,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
+  

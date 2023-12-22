@@ -13,8 +13,6 @@ export default function MovieDetailsScreen({ route, navigation }) {
   const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-
-
   useEffect(() => {
     axios
       .get(`https://api.themoviedb.org/3/movie/${route.params.film.id}`, {
@@ -90,18 +88,15 @@ export default function MovieDetailsScreen({ route, navigation }) {
     }
     setTopRatedMovies(movies);
   };
-  
   function convertToHoursAndMinutes(minutes) {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
     return `${hours}h ${remainingMinutes}min`;
   }
   
-
   if (!movie) {
     return null;
   }
-
   return (
     <ScrollView style={styles.container}>
       <Image source={{ uri: `https://image.tmdb.org/t/p/w500/${movie.poster_path}` }} style={styles.movieImage} />
